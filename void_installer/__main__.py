@@ -1,8 +1,7 @@
 import logging
 import subprocess
 
-from .cmd import run
-from .xbps import Xbps
+from .util import run, Xbps
 
 # TODO: log to file (e.g. `filename="void-installer.log"`), also maybe https://stackoverflow.com/a/56944256
 logging.basicConfig(format="[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s", level=logging.INFO)
