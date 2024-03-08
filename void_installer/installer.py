@@ -45,3 +45,21 @@ class Installer:
     def add_module(self, mod, **kwargs):
         m = mod(self, **kwargs)
         self.modules[m.id] = m
+
+    def run_phase(self, name: str):
+        ...
+
+    def configure(self):
+        """show the TUI/GUI/whatever, if desired"""
+        ...
+
+    def base_install(self):
+        """do the base install (xbps-install base-system etc)"""
+        ...
+
+    def run(self):
+        self.run_phase("setup")
+        self.configure()
+        self.run_phase("pre_install")
+        self.base_install()
+        self.run_phase("post_install")

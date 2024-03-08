@@ -4,8 +4,12 @@ import shlex
 import subprocess as sp
 from asyncio import subprocess as asp
 
+from .. import TARGET_DIR
 
-__all__ = ["run", "target_run"]
+__all__ = [
+    "run",
+    "target_run",
+]
 
 logger = logging.getLogger(__name__)
 
@@ -99,19 +103,13 @@ async def __run(
     return sp.CompletedProcess(args=args, returncode=ret, stdout=outstream, stderr=errstream)
 
 
-def run(args: str | list[str], **kwargs) -> sp.CompletedProcess[str | bytes]:
+def run(args: str | list[str], target: bool = False, **kwargs) -> sp.CompletedProcess[str | bytes]:
     """Run a command in a subprocess, like `subprocess.run`. Takes the same arguments,
     but additionally `log`, which says what level to log the output as (defaults to `logging.INFO`).
     Defaults to `text=True, capture_output=True, check=True, stdout=PIPE, stderr=PIPE`."""
+    if target:
+        if isinstance(args, str):
+            args = f"chroot {TARGET_DIR} " + args
+        elif isinstance(args, list):
+            args = ["chroot", str(TARGET_DIR), *args]
     return asyncio.run(__run(args, **kwargs))
-
-
-def target_run(args: str | list[str], **kwargs) -> sp.CompletedProcess[str | bytes]:
-    """`run()` a command chrooted into the target system mounted at `/mnt/target`."""
-    if isinstance(args, str):
-        args = "chroot /mnt/target " + args
-    elif isinstance(args, list):
-        args = ["chroot", "/mnt/target"] + args
-    else:
-        raise TypeError(f"expected str or list[str], got {type(args)}")
-    return run(args, **kwargs)

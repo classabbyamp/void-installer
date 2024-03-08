@@ -1,0 +1,21 @@
+version: 1
+created_by: 0.0.1
+created_on: 2038-01-19T08:00Z
+modules:
+  mycoolmodule:
+    foo: meow
+  locale:
+    lang: fr_CA.UTF-8
+    locales:
+      - en_CA
+      - fr_CA
+  user_account:
+    username: void
+    displayname: void user
+    password: hunter2
+    groups:
+      - wheel
+      - audio
+      - video
+      - kvm
+      - xbuilder

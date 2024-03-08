@@ -14,6 +14,7 @@ def main():
     installer = Installer()
     installer.load_modules(Path("modules"))
     pprint(dict(installer.config))
+    # installer.run()
     logger.info("ended run")
 
 

@@ -3,10 +3,11 @@ from abc import ABC
 from pydantic import BaseModel
 
 from .installer import Installer
+from .interface import Element
 
 
 class ModuleSettings(BaseModel):
-    pass
+    _layout: dict[str, Element] = {}
 
 
 class Module(ABC):
@@ -30,7 +31,7 @@ class Module(ABC):
     def __init_subclass__(cls, /, **kwargs):
         super().__init_subclass__(**kwargs)
 
-        required_clsvars = ("id", "name", "desc")
+        required_clsvars = ("id", "name", "desc", "order", "layout")
         for var in required_clsvars:
             if not hasattr(cls, var):
                 raise NotImplementedError(f"Module '{cls}' lacks required attribute '{var}'")
@@ -46,29 +47,22 @@ class Module(ABC):
 
         self.config = ctx.config
 
-    def setup(self):
+    def pre_configure(self, interactive: bool):
+        """Do any setup required before showing the menu page, like collecting data for a select input"""
         pass
 
-    def configure(self):
-        pass
-
-    def validate(self):
+    def post_configure(self, interactive: bool):
+        """After a page is validated and submitted, do something"""
         pass
 
     def pre_install(self):
-        pass
-
-    def install(self):
+        """Do anything before the installation starts"""
         pass
 
     def post_install(self):
+        """Do anything after the installation is completed"""
         pass
 
     def cleanup(self, error: bool = False):
-        pass
-
-    def import_settings(self):
-        pass
-
-    def export_settings(self):
+        """Do any necessary cleanup on success or error"""
         pass

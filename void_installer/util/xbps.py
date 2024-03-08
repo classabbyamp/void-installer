@@ -4,7 +4,9 @@ from typing import Callable
 
 from .cmd import run, target_run
 
-__all__ = ["Xbps"]
+__all__ = [
+    "Xbps",
+]
 
 logger = logging.getLogger(__name__)
 
