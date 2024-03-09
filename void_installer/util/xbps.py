@@ -2,7 +2,7 @@ import logging
 from subprocess import CalledProcessError
 from typing import Callable
 
-from .cmd import run, target_run
+from .cmd import run
 
 __all__ = [
     "Xbps",
@@ -59,10 +59,10 @@ class Xbps:
         update: bool = False,
         verbose: bool = False,
         noninteractive: bool = True,
-        chroot: bool = False,
+        target: bool = False,
     ):
         """Runs xbps-install with the specified arguments.
-        If `chroot` is `True`, the command will be run by chrooting into the target system."""
+        If `target` is `True`, the command will be run by chrooting into the target system."""
 
         args = ["xbps-install"]
         if automatic:
@@ -89,7 +89,7 @@ class Xbps:
             args += ["-R", repo]
         if reproducible:
             args += ["--reproducible"]
-        if rootdir and not chroot:
+        if rootdir and not target:
             args += ["-r", rootdir]
         if sync:
             args += ["-S"]
@@ -103,9 +103,7 @@ class Xbps:
             args += ["-y"]
         args += pkgs
 
-        if chroot:
-            target_run(args, env=self.env)
-        run(args, env=self.env)
+        run(args, env=self.env, target=target)
 
     def reconfigure(
         self,
@@ -117,10 +115,10 @@ class Xbps:
         ignore: list[str] = [],
         rootdir: str | None = None,
         verbose: bool = False,
-        chroot: bool = False,
+        target: bool = False,
     ):
         """Runs xbps-reconfigure with the specified arguments.
-        If `chroot` is `True`, the command will be run by chrooting into the target system."""
+        If `target` is `True`, the command will be run by chrooting into the target system."""
 
         args = ["xbps-reconfigure"]
         if config is not None:
@@ -131,7 +129,7 @@ class Xbps:
             args += ["-f"]
         for ipkg in ignore:
             args += ["-i", ipkg]
-        if rootdir and not chroot:
+        if rootdir and not target:
             args += ["-r", rootdir]
         if verbose:
             args += ["-v"]
@@ -140,6 +138,4 @@ class Xbps:
         else:
             args += pkgs
 
-        if chroot:
-            target_run(args, env=self.env)
-        run(args, env=self.env)
+        run(args, env=self.env, target=target)

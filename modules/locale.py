@@ -1,4 +1,4 @@
-from void_installer import Module, ModuleSettings
+from void_installer.module import Module, ModuleSettings
 
 
 def setup(ctx):

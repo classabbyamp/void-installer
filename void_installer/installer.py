@@ -3,7 +3,7 @@ import logging
 import sys
 from pathlib import Path
 
-from . import Config
+from .config import Config
 
 logger = logging.getLogger(__name__)
 

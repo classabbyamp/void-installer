@@ -1,6 +1,5 @@
 import asyncio
 import logging
-from os import PathLike
 import shlex
 import subprocess as sp
 from asyncio import subprocess as asp
