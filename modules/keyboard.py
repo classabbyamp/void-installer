@@ -2,9 +2,10 @@ from pathlib import Path
 
 from pydantic import field_validator
 
-from void_installer.util import run
+from void_installer import util
 from void_installer.interface import RadioSelect
 from void_installer.module import Module, ModuleSettings
+from void_installer import TARGET_DIR
 
 
 def setup(ctx):
@@ -50,8 +51,11 @@ class KeyboardModule(Module):
 
     def post_configure(self, interactive: bool):
         if interactive:
-            run(["loadkeys", self.Settings.keymap])
+            util.run(["loadkeys", self.Settings.keymap])
 
     def post_install(self):
-        # sed -i -e "s|#\?KEYMAP=.*|KEYMAP=$KEYMAP|g" $TARGETDIR/etc/rc.conf
-        ...
+        util.sed(
+            r"#?KEYMAP=.*",
+            f"KEYMAP={self.Settings.keymap}",
+            TARGET_DIR / "etc/rc.conf"
+        )

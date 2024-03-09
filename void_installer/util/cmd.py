@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from os import PathLike
 import shlex
 import subprocess as sp
 from asyncio import subprocess as asp
@@ -8,14 +9,13 @@ from .. import TARGET_DIR
 
 __all__ = [
     "run",
-    "target_run",
 ]
 
 logger = logging.getLogger(__name__)
 
 
-async def __log_stream(stream: asyncio.StreamReader | None,
-                       text: bool, capture: bool, log: int, chan: str) -> str | bytes | None:
+async def _log_stream(stream: asyncio.StreamReader | None,
+                      text: bool, capture: bool, log: int, chan: str) -> str | bytes | None:
     """Log the output streams of a command"""
     if stream is None:
         return None
@@ -40,7 +40,7 @@ async def __log_stream(stream: asyncio.StreamReader | None,
     return None
 
 
-def __set_stdio(stdio: int | None, capture: bool) -> int | None:
+def _set_stdio(stdio: int | None, capture: bool) -> int | None:
     if capture:
         if stdio is None:
             return sp.PIPE
@@ -48,7 +48,7 @@ def __set_stdio(stdio: int | None, capture: bool) -> int | None:
     return None
 
 
-async def __run(
+async def _run(
     args: str | list[str],
     log: int = logging.INFO,
     shell: bool = False,
@@ -68,8 +68,8 @@ async def __run(
         "LANG": "C.UTF-8",
     }
     kwargs |= {
-        "stdout": __set_stdio(kwargs.get("stdout", None), capture_output),
-        "stderr": __set_stdio(kwargs.get("stderr", None), capture_output),
+        "stdout": _set_stdio(kwargs.get("stdout", None), capture_output),
+        "stderr": _set_stdio(kwargs.get("stderr", None), capture_output),
         "env": env,
     }
     logger.log(log, f"Running command '{args}'")
@@ -88,8 +88,8 @@ async def __run(
 
     outstream, errstream = await asyncio.gather(
         *(
-            __log_stream(proc.stdout, text, capture_output, log, "stdout"),
-            __log_stream(proc.stderr, text, capture_output, log, "stderr"),
+            _log_stream(proc.stdout, text, capture_output, log, "stdout"),
+            _log_stream(proc.stderr, text, capture_output, log, "stderr"),
         )
     )
     await proc.communicate()
@@ -106,10 +106,11 @@ async def __run(
 def run(args: str | list[str], target: bool = False, **kwargs) -> sp.CompletedProcess[str | bytes]:
     """Run a command in a subprocess, like `subprocess.run`. Takes the same arguments,
     but additionally `log`, which says what level to log the output as (defaults to `logging.INFO`).
-    Defaults to `text=True, capture_output=True, check=True, stdout=PIPE, stderr=PIPE`."""
+    Defaults to `text=True, capture_output=True, check=True, stdout=PIPE, stderr=PIPE`.
+    If `target` is provided, the command will be run by `chroot(1)` in given directory."""
     if target:
         if isinstance(args, str):
             args = f"chroot {TARGET_DIR} " + args
         elif isinstance(args, list):
-            args = ["chroot", str(TARGET_DIR), *args]
-    return asyncio.run(__run(args, **kwargs))
+            args = ["chroot", f"{TARGET_DIR}", *args]
+    return asyncio.run(_run(args, **kwargs))
