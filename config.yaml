@@ -1,14 +1,24 @@
 version: 1
-created_by: 0.0.1
-created_on: 2038-01-19T08:00Z
-modules:
-  mycoolmodule:
-    foo: meow
+generated:
+  version: 0.0.1
+  at: 2038-01-19T08:00Z
+settings:
+  keyboard:
+    keymap: cf
+  mirror:
+    url: https://repo-fastly.voidlinux.org
+  hostname:
+    value: void
   locale:
     lang: fr_CA.UTF-8
     locales:
       - en_CA
       - fr_CA
+  timezone:
+    value: America/Montreal
+  root_account:
+    enable: true
+    password: hunter2
   user_account:
     username: void
     displayname: void user
@@ -19,3 +29,20 @@ modules:
       - video
       - kvm
       - xbuilder
+      - users
+  bootloader:
+    kind: grub
+    disk: sda
+  partition:
+    idk: something
+  filesystems:
+    idk: something
+  packages:
+    install:
+      - chrony
+      - doas
+    ignore:
+      - sudo
+  services:
+    enable:
+      - chrony

@@ -38,12 +38,12 @@ class Module(ABC):
 
     def __init__(self, ctx: Installer):
         if hasattr(self, "Settings"):
-            if self.id in ctx.config.modules.keys():  # type: ignore (checked for existence in __init_subclass__)
+            if self.id in ctx.config.settings.keys():  # type: ignore (checked for existence in __init_subclass__)
                 # checked for existence in __init_subclass__
-                ctx.config.modules[self.id] = self.Settings(**ctx.config.modules[self.id])  # type: ignore
+                ctx.config.settings[self.id] = self.Settings(**ctx.config.settings[self.id])  # type: ignore
             else:
                 # checked for existence in __init_subclass__
-                ctx.config.modules[self.id] = self.Settings()  # type: ignore
+                ctx.config.settings[self.id] = self.Settings()  # type: ignore
 
         self.config = ctx.config
 

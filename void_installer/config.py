@@ -29,7 +29,7 @@ class GeneratedInfo(BaseModel):
 class Config(BaseModel):
     version: int = CONFIG_VERSION
     generated: GeneratedInfo | None = None
-    modules: dict[str, Any] = Field(default_factory=dict)
+    settings: dict[str, Any] = Field(default_factory=dict)
 
     @classmethod
     def load_yaml(cls, path: Path):
